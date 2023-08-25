@@ -16,6 +16,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
       appBar: AppBar(
         title: Text("Authentication"),
+        centerTitle: true,
+        backgroundColor: Colors.blue,
       ),
       body: AuthForm(),
     );

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -7,16 +9,50 @@ class AuthForm extends StatefulWidget {
   @override
   State<AuthForm> createState() => _AuthFormState();
 }
-
 class _AuthFormState extends State<AuthForm> {
+//-------------------------------------------------------
+
   final _formkey = GlobalKey<FormState>();
   var _email = '';
   var _password = '';
   var _username = '';
   bool isLoginPage = false;
+  //--------------------------------------------------------
+  startauthentication()async{
+    final validity = _formkey.currentState!.validate();
+    FocusScope.of(context).unfocus();
+
+    if(validity){
+      _formkey.currentState ?.save();
+      submitform(_email, _password,_username);
+
+    }
+  }
+  submitform(String email, String password, String username)async{
+    final auth = FirebaseAuth.instance;
+      UserCredential authResult;
+    try{
+      if(isLoginPage){
+        authResult = await auth.signInWithEmailAndPassword(email: email, password: password);
+      }
+      else{
+        authResult = await auth.createUserWithEmailAndPassword(email: email, password: password);
+        String uid= authResult.user!.uid;
+        await FirebaseFirestore.instance.collection("users").doc(uid).set({
+          "username" : username,
+          "email" : email,
+          "password" : password,
+        });
+      }
+    }
+    catch(err){
+      print(err);
+
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: ListView(
@@ -114,7 +150,18 @@ class _AuthFormState extends State<AuthForm> {
                         onPressed: () {},
                       ),
                     ),
-                  )
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  TextButton(onPressed: () {
+                    setState(() {
+                      isLoginPage = !isLoginPage;
+                    });
+                  },
+                      child: isLoginPage
+                  ?  const Text('Not a member?',style: TextStyle(fontSize: 16),)
+                  :   const Text('Already a member?',style: TextStyle(fontSize: 16)))
                 ],
               ),
             ),

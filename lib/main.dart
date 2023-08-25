@@ -18,8 +18,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
 
-        primaryColor: Colors.purple,
-        // brightness: Brightness.dark,
+        primaryColor: Colors.purpleAccent,
+        brightness: Brightness.dark,
         // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         // useMaterial3: true,
       ),
